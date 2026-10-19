@@ -1,0 +1,10 @@
+[Unit]
+Description=Keep your Canvas session active every ten minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Unit=herald-canvas-keepalive.service
+
+[Install]
+WantedBy=timers.target

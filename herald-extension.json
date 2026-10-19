@@ -1,0 +1,67 @@
+{
+  "name": "canvas",
+  "description": "Canvas LMS through a renewed browser session: courses, grades, submission state, announcements and inbox headers, with tap-approved writes and courses you can lock to metadata only.",
+  "version": "0.3.0",
+  "enabled": false,
+  "setup": [
+    {
+      "key": "canvas.base_url",
+      "prompt": "Your school's Canvas address",
+      "example": "https://umd.instructure.com"
+    },
+    {
+      "key": "canvas.login_url",
+      "prompt": "The tailnet address the private login page will be served at: this server's Tailscale name and a free port",
+      "example": "https://myserver.tail1234.ts.net:8447"
+    },
+    {
+      "key": "canvas.login_users",
+      "prompt": "Tailscale account(s) allowed to open the login page (the email you sign in to Tailscale with)",
+      "type": "list",
+      "example": "[\"you@example.com\"]"
+    },
+    {
+      "key": "canvas.metadata_only_courses",
+      "prompt": "Course codes Herald may see only names, dates and grades for, never content or files (for a syllabus that bans AI tools on course materials). Empty for none",
+      "type": "list",
+      "example": "[\"CMSC132\"]",
+      "required": false
+    },
+    {
+      "key": "canvas.auth_dir",
+      "prompt": "Where the session cookies and browser profile are kept (private, never committed)",
+      "default": "{HOME}/canvas"
+    },
+    {
+      "key": "canvas.login_port",
+      "prompt": "Loopback port for the login page",
+      "type": "number",
+      "default": 8793,
+      "required": false
+    },
+    {
+      "key": "canvas.upload_roots",
+      "prompt": "Directories a submission may upload files from",
+      "type": "list",
+      "default": ["{HOME}/ledger/raw"],
+      "required": false
+    },
+    {
+      "key": "canvas.upload_hosts",
+      "prompt": "Storage hosts Canvas may hand uploads to, besides Canvas itself",
+      "type": "list",
+      "default": ["uploads.instructure.com"],
+      "required": false
+    }
+  ],
+  "provides_capabilities": [
+    {
+      "key": "canvas_api",
+      "title": "Canvas",
+      "summary": "Courses, grades, submission state, announcements and inbox headers.",
+      "settings": ["canvas.base_url", "canvas.auth_dir", "canvas.login_url", "canvas.login_users"],
+      "files": ["{canvas.auth_dir}/session.json"],
+      "setup_hint": "Start herald-canvas-login.service and open canvas.login_url on your phone to log in once."
+    }
+  ]
+}

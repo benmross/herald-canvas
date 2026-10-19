@@ -1,0 +1,14 @@
+[Unit]
+Description=Renew your Canvas browser session
+After=network-online.target
+ConditionPathExists={{HOME}}/canvas/session.json
+
+[Service]
+Type=oneshot
+WorkingDirectory={{ROOT}}
+ExecStart={{ROOT}}/venv/bin/python {{HOME}}/extensions/canvas/bin/herald-canvas keepalive
+Environment=PYTHONUNBUFFERED=1
+Environment=HERALD_ROOT={{ROOT}}
+UMask=0077
+NoNewPrivileges=true
+TimeoutStartSec=2min
