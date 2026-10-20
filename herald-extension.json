@@ -1,7 +1,7 @@
 {
   "name": "canvas",
   "description": "Canvas LMS through a renewed browser session: courses, grades, submission state, announcements and inbox headers, with tap-approved writes and courses you can lock to metadata only.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "enabled": false,
   "setup": [
     {
@@ -43,14 +43,18 @@
       "key": "canvas.upload_roots",
       "prompt": "Directories a submission may upload files from",
       "type": "list",
-      "default": ["{HOME}/ledger/raw"],
+      "default": [
+        "{HOME}/ledger/raw"
+      ],
       "required": false
     },
     {
       "key": "canvas.upload_hosts",
       "prompt": "Storage hosts Canvas may hand uploads to, besides Canvas itself",
       "type": "list",
-      "default": ["uploads.instructure.com"],
+      "default": [
+        "uploads.instructure.com"
+      ],
       "required": false
     }
   ],
@@ -59,9 +63,24 @@
       "key": "canvas_api",
       "title": "Canvas",
       "summary": "Courses, grades, submission state, announcements and inbox headers.",
-      "settings": ["canvas.base_url", "canvas.auth_dir", "canvas.login_url", "canvas.login_users"],
-      "files": ["{canvas.auth_dir}/session.json"],
+      "settings": [
+        "canvas.base_url",
+        "canvas.auth_dir",
+        "canvas.login_url",
+        "canvas.login_users"
+      ],
+      "files": [
+        "{canvas.auth_dir}/session.json"
+      ],
       "setup_hint": "Start herald-canvas-login.service and open canvas.login_url on your phone to log in once."
     }
+  ],
+  "steps": [
+    "Install Tailscale on this machine and on your phone, signed in to the same account.",
+    "Let your user publish the login page on your tailnet, once: sudo tailscale set --operator=$USER",
+    "Install the virtual display and viewer: sudo apt install tigervnc-standalone-server websockify novnc",
+    "Install the browser Herald logs in with: ~/herald/venv/bin/pip install playwright requests && ~/herald/venv/bin/playwright install chromium",
+    "Turn it on: herald ext enable canvas, then herald services install and herald services enable.",
+    "Log in once: start herald-canvas-login.service, open your canvas.login_url on your phone, sign in and finish Duo. The page closes itself when Canvas answers as you."
   ]
 }
