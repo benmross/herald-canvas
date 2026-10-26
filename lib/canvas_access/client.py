@@ -220,6 +220,30 @@ class Client:
             return self.catalog()
         return self.sanitize(path, self._pages(path, params))
 
+    def download(self, course_id, file_id, directory):
+        """Save one course file. Goes through the course gate, so a metadata-only
+        course is refused. The bytes come from Canvas's signed public URL, which
+        is fetched without any Canvas cookie."""
+        import pathlib
+        course_id, file_id = str(int(course_id)), str(int(file_id))
+        meta = self.get(f"/api/v1/courses/{course_id}/files/{file_id}")
+        if str(meta.get("id")) != file_id or meta.get("locked_for_user"):
+            raise PermissionError("Canvas does not offer this file to you")
+        if int(meta.get("size") or 0) > 30 * 1024 * 1024:
+            raise ValueError("Files over 30 MB are not downloaded")
+        signed, _ = self._request("GET", f"/api/v1/files/{file_id}/public_url")
+        url = urlsplit((signed or {}).get("public_url", ""))
+        if url.scheme != "https" or url.username or url.password:
+            raise CanvasError("Canvas did not return a usable download link")
+        response = requests.get(url.geturl(), timeout=60)
+        response.raise_for_status()
+        name = pathlib.Path(meta.get("display_name") or file_id).name
+        out = pathlib.Path(directory)
+        out.mkdir(parents=True, exist_ok=True)
+        target = out / name
+        target.write_bytes(response.content)
+        return {"saved": str(target), "bytes": len(response.content)}
+
     def write(self, method, path, data):
         if red.acting() is None:
             raise PermissionError("Canvas writes require a granted red.py approval")
