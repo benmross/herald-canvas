@@ -82,5 +82,13 @@
     "Install the browser Herald logs in with: ~/herald/venv/bin/pip install playwright requests && ~/herald/venv/bin/playwright install chromium",
     "Turn it on: herald ext enable canvas, then herald services install and herald services enable.",
     "Log in once: start herald-canvas-login.service, open your canvas.login_url on your phone, sign in and finish Duo. The page closes itself when Canvas answers as you."
-  ]
+  ],
+  "sources": {
+    "canvas": {
+      "search": {
+        "announcement": "course",
+        "assignment": "course"
+      }
+    }
+  }
 }
